@@ -1,0 +1,10 @@
+fastapi==0.109.2
+uvicorn==0.22.0
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+pydantic==2.5.3
+python-multipart==0.0.6
+ultralytics==8.3.22
+numpy<2
+opencv-python-headless==4.8.0.76

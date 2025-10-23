@@ -1,0 +1,40 @@
+# backend/docker-compose.yml
+version: "3.8"
+services:
+  db:
+    image: postgres:15
+    container_name: dd-postgres
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - dd_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 10
+
+  backend:
+    build: .
+    container_name: dd-backend
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Override DATABASE_URL to use 'db' hostname instead of 'localhost'
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      # Model path inside container
+      - YOLO_MODEL_PATH=/app/models/best.pt
+    volumes:
+      - ./app:/app/app          # Mount app code for hot reload
+      - ./models:/app/models    # Mount models directory
+      - ./uploads:/app/uploads  # Mount uploads directory
+    command: ["uvicorn","app.main:app","--host","0.0.0.0","--port","8000","--reload"]
+
+volumes:
+  dd_postgres_data:

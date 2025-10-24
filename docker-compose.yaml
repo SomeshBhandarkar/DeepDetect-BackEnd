@@ -1,4 +1,4 @@
-# backend/docker-compose.yml
+
 version: "3.8"
 services:
   db:
@@ -26,15 +26,16 @@ services:
     env_file:
       - .env
     environment:
-      # Override DATABASE_URL to use 'db' hostname instead of 'localhost'
+
       - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      # Model path inside container
+
       - YOLO_MODEL_PATH=/app/models/best.pt
     volumes:
-      - ./app:/app/app          # Mount app code for hot reload
-      - ./models:/app/models    # Mount models directory
-      - ./uploads:/app/uploads  # Mount uploads directory
+      - ./app:/app/app         
+      - ./models:/app/models   
+      - ./uploads:/app/uploads 
     command: ["uvicorn","app.main:app","--host","0.0.0.0","--port","8000","--reload"]
 
 volumes:
+
   dd_postgres_data:

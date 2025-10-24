@@ -1,4 +1,3 @@
-# app/models.py
 from sqlalchemy import Column, String, DateTime, Integer, Float, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -6,10 +5,9 @@ from app.database import Base
 
 class DetectionRun(Base):
     __tablename__ = "detection_runs"
-    id = Column(String, primary_key=True, index=True)     # uuid
+    id = Column(String, primary_key=True, index=True)     
     filename = Column(String, nullable=True)
     timestamp_utc = Column(DateTime, default=datetime.utcnow)
-    # avoid reserved name 'metadata' — use meta
     meta = Column(JSON, nullable=True)
 
     objects = relationship("DetectedObject", back_populates="run", cascade="all, delete-orphan")
@@ -21,8 +19,9 @@ class DetectedObject(Base):
     class_id = Column(Integer, nullable=False)
     class_name = Column(String, nullable=False)
     confidence = Column(Float, nullable=False)
-    bbox = Column(JSON, nullable=False)   # stored as [x1,y1,x2,y2]
+    bbox = Column(JSON, nullable=False)  
     pinned = Column(JSON, nullable=True)
     condition = Column(String, nullable=True)
 
     run = relationship("DetectionRun", back_populates="objects")
+

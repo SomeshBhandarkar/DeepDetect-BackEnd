@@ -1,4 +1,3 @@
-# app/main.py
 import uuid
 import shutil
 import os
@@ -12,7 +11,6 @@ from app.yolo_model import predict_from_path
 from app.database import SessionLocal, init_db
 from app.models import DetectionRun, DetectedObject
 
-# create necessary folders
 UPLOAD_DIR = PathlibPath("uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 MODEL_DIR = PathlibPath("models")
@@ -20,7 +18,6 @@ MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(title="DeepDetect API")
 
-# CORS - allow local dev origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
@@ -29,7 +26,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# create DB tables
 init_db()
 
 class UpdateObjectSchema(BaseModel):
@@ -47,10 +43,9 @@ async def analyze_image(file: UploadFile = File(...), conf: float = Query(0.25, 
     with open(save_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
 
-    # run inference
+
     detections = predict_from_path(save_path, conf=conf)
 
-    # save to DB
     db = SessionLocal()
     try:
         run = DetectionRun(id=run_id, filename=file.filename, meta={"saved_path": str(save_path)})
@@ -134,3 +129,4 @@ async def update_object(run_id: str, object_id: int, payload: UpdateObjectSchema
         }
     finally:
         db.close()
+
